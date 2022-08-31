@@ -1,75 +1,136 @@
-var queue = [];
-var input = 0;
-function calculateQueue(value) {
-  if (input !== 0) {
-    input = parseFloat(input);
+var keys = document.querySelectorAll("#calculator span");
+var operators = ["+", "-", "x", "÷"];
+var decimalAdded = false;
+for (var i = 0; i < keys.length; i++) {
+  keys[i].onclick = function (e) {
+    var input = document.querySelector(".screen");
+    var inputVal = input.innerHTML;
+    var btnVal = this.innerHTML;
+    if (btnVal == "AC") {
+      input.innerHTML = "";
+      decimalAdded = false;
+    } else if (btnVal == "=") {
+      var equation = inputVal;
+      var lastChar = equation[equation.length - 1];
+      equation = equation
+        .replace(/x/g, "*")
+        .replace(/÷/g, "/")
+        .replace(/\^/g, "**");
+      if (operators.indexOf(lastChar) > 0 || lastChar == ".")
+        equation = equation.replace(/.$/, "");
+      if (equation) input.innerHTML = eval(equation);
+      decimalAdded = false;
+    } else if (operators.indexOf(btnVal) > -1) {
+      var lastChar = inputVal[inputVal.length - 1];
+      if (inputVal != "" && operators.indexOf(lastChar) == -1)
+        input.innerHTML += btnVal;
+      else if (inputVal == "" && btnVal == "-") input.innerHTML += btnVal;
+      if (operators.indexOf(lastChar) > -1 && inputVal.length > 1) {
+        input.innerHTML = inputVal.replace(/.$/, btnVal);
+      }
 
-    addToQueue(input);
-  }
-  var answer = value[0];
-  var dividedByZero = 0;
-  for (var i = 2; i < value.length; i = i + 2) {
-    switch (queue[i - 1]) {
-      case "+":
-        answer += value[i];
-        break;
-      case "-":
-        answer -= value[i];
-        break;
-      case "/":
-        if (value[i] === 0) dividedByZero = 1;
-        else answer = answer / value[i];
-
-        break;
-      case "*":
-        answer = answer * value[i];
-        break;
+      decimalAdded = false;
+    } else if (btnVal == ".") {
+      if (!decimalAdded) {
+        input.innerHTML += btnVal;
+        decimalAdded = true;
+      }
+    } else {
+      input.innerHTML += btnVal;
     }
+    e.preventDefault();
+  };
+}
+document.onkeydown = function (event) {
+  var key_press = String.fromCharCode(event.keyCode);
+  var key_code = event.keyCode;
+  var input = document.querySelector(".screen");
+  var inputVal = input.innerHTML;
+  var btnVal = this.innerHTML;
+  var lastChar = inputVal[inputVal.length - 1];
+  var equation = inputVal;
+  equation = equation
+    .replace(/x/g, "*")
+    .replace(/÷/g, "/")
+    .replace(/\^/g, "**");
+  if (key_press == 1) {
+    input.innerHTML += key_press;
   }
-
-  answer = answer.toFixed(10);
-  answer = parseFloat(answer);
-  if (dividedByZero === 1) {
-    clearAll();
-    document.getElementById("answer").innerHTML = "0";
-  } else {
-    document.getElementById("answer").innerHTML = answer;
-    input = answer;
-    queue = [];
+  if (key_press == 2) {
+    input.innerHTML += key_press;
   }
-}
-function addToQueue(input) {
-  queue.push(input);
-}
-function clearAll() {
-  queue = [];
-  input = 0;
-  document.getElementById("answer").innerHTML = "0";
-}
-function numericButton(arg) {
+  if (key_press == 3 || key_code == 32) {
+    input.innerHTML += key_press;
+  }
+  if (key_press == 4) {
+    input.innerHTML += key_press;
+  }
+  if (key_press == 5) {
+    input.innerHTML += key_press;
+  }
+  if (key_press == 6 && event.shiftKey == false) {
+    input.innerHTML += key_press;
+  }
+  if (key_press == 7) {
+    input.innerHTML += key_press;
+  }
+  if (key_press == 8 && event.shiftKey == false) {
+    input.innerHTML += key_press;
+  }
+  if (key_press == 9) {
+    input.innerHTML += key_press;
+  }
+  if (key_press == 0) {
+    input.innerHTML += key_press;
+  }
   if (
-    document.getElementById("answer").innerHTML === "0" ||
-    (document.getElementById("answer").innerHTML == "0" && arg != ".")
+    (inputVal != "" &&
+      operators.indexOf(lastChar) == -1 &&
+      key_code == 187 &&
+      event.shiftKey) ||
+    key_code == 107 ||
+    (key_code == 61 && event.shiftKey)
   ) {
-    document.getElementById("answer").innerHTML = "";
+    document.querySelector(".screen").innerHTML += "+";
   }
-
-  if (!(arg === ".") || !input.match(/[.]/)) {
-    input += arg;
-    document.getElementById("answer").innerHTML += arg;
+  if (
+    (inputVal != "" &&
+      operators.indexOf(lastChar) == -1 &&
+      key_code == 189 &&
+      event.shiftKey) ||
+    (inputVal != "" && operators.indexOf(lastChar) == -1 && key_code == 107)
+  ) {
+    document.querySelector(".screen").innerHTML += "-";
   }
-}
-function operatorButton(arg) {
-  if (input !== 0 && input !== "-") {
-    input = parseFloat(input);
-    addToQueue(input);
-    addToQueue(arg);
-    document.getElementById("answer").innerHTML += arg;
-    input = 0;
+  if (
+    (inputVal != "" &&
+      operators.indexOf(lastChar) == -1 &&
+      key_code == 56 &&
+      event.shiftKey) ||
+    (inputVal != "" && operators.indexOf(lastChar) == -1 && key_code == 106)
+  ) {
+    document.querySelector(".screen").innerHTML += "x";
   }
-  if (arg == "-" && iserror(queue[0]) && input !== "-") {
-    input = "-";
-
-    document.getElementById("answer").innerHTML = "-";
+  if (
+    (inputVal != "" && operators.indexOf(lastChar) == -1 && key_code == 191) ||
+    (inputVal != "" && operators.indexOf(lastChar) == -1 && key_code == 111)
+  ) {
+    document.querySelector(".screen").innerHTML += "÷";
   }
-}
+  if (
+    inputVal != "" &&
+    operators.indexOf(lastChar) == -1 &&
+    key_code == 54 &&
+    event.shiftKey
+  ) {
+    document.querySelector(".screen").innerHTML += "^";
+  }
+  if (key_code == 13 || (key_code == 187 && event.shiftKey == false)) {
+    input.innerHTML = eval(equation);
+    decimalAdded = false;
+  }
+  if (key_code == 8 || key_code == 46) {
+    input.innerHTML = "";
+    decimalAdded = false;
+  }
+};
